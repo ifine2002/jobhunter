@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.ifine.jobhunter.domain.User;
+import vn.ifine.jobhunter.domain.response.ApiResponse;
 import vn.ifine.jobhunter.service.UserService;
 
 @RestController
@@ -30,34 +31,34 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User reqUser) {
+    public ResponseEntity<ApiResponse<User>> createUser(@Valid @RequestBody User reqUser) {
         String hashPassword = this.passwordEncoder.encode(reqUser.getPassword());
         reqUser.setPassword(hashPassword);
         User user = this.userService.handleCreateUser(reqUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.created("Create a new user successfully", user));
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable("id") long id) {
         this.userService.handleDeleteUser(id);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(ApiResponse.<Void>success("Delete user successfully", null));
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        return ResponseEntity.ok(this.userService.fetchUserById(id));
+    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable("id") long id) {
+        return ResponseEntity.ok(ApiResponse.success("Fetch a user successfully", this.userService.fetchUserById(id)));
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUser() {
-        return ResponseEntity.ok(this.userService.fetchAllUser());
+    public ResponseEntity<ApiResponse<List<User>>> getAllUser() {
+        return ResponseEntity.ok(ApiResponse.success("Fetch all user successfully", this.userService.fetchAllUser()));
     }
 
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User reqUser) {
+    public ResponseEntity<ApiResponse<User>> updateUser(@RequestBody User reqUser) {
         User user = this.userService.handleUpdateUser(reqUser);
-        return ResponseEntity.ok(user);
-
+        return ResponseEntity.ok(ApiResponse.success("Fetch a user successfully", user));
     }
 
 }

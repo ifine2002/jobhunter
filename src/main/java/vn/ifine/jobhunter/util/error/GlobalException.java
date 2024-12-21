@@ -15,6 +15,7 @@ public class GlobalException {
         // Sử dụng Builder Pattern của Lombok
         ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
                 .status(HttpStatus.BAD_REQUEST.value())
+                .error("Exception occurs...")
                 .message(ex.getMessage())
                 .data(null) // Trong trường hợp không có dữ liệu trả về
                 .build();
@@ -28,6 +29,7 @@ public class GlobalException {
         // Sử dụng Builder Pattern của Lombok
         ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
                 .status(HttpStatus.BAD_REQUEST.value())
+                .error("Incorrect data type")
                 .message(ex.getMessage())
                 .data(null) // Trong trường hợp không có dữ liệu trả về
                 .build();

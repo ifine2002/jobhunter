@@ -10,6 +10,9 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private int status;
+    private String error;
+
+    // message có thể là String, hoặc arraylist
     private Object message;
     private T data;
 
