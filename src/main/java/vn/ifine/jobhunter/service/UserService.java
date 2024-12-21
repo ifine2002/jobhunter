@@ -17,4 +17,6 @@ public interface UserService {
     List<User> fetchAllUser();
 
     User handleUpdateUser(User user);
+
+    User handleUserByUsername(String username);
 }
