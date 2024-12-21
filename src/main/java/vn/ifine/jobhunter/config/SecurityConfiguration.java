@@ -42,6 +42,7 @@ public class SecurityConfiguration {
         String[] whiteList = { "/", "/api/v1/auth/login" };
         http
                 .csrf(c -> c.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers(whiteList).permitAll()

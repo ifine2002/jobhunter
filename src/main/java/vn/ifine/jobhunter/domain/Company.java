@@ -1,61 +1,60 @@
 package vn.ifine.jobhunter.domain;
 
 import java.time.Instant;
+import java.util.List;
 
-import org.apache.catalina.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import vn.ifine.jobhunter.util.constant.GenderEnum;
+import vn.ifine.jobhunter.util.SecurityUtil;
 
 @Entity
-@Table(name = "users")
+@Table(name = "companies")
 @Getter
 @Setter
-public class User {
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "name không được để trống")
     private String name;
 
-    @NotBlank(message = "email không được để trống")
-    private String email;
-
-    @NotBlank(message = "password không được để trống")
-    private String password;
-
-    private int age;
-
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String description;
 
     private String address;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
+    private String logo;
+
     private Instant createdAt;
+
     private Instant updatedAt;
+
     private String createdBy;
+
     private String updatedBy;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<User> users;
+
+    // @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    // @JsonIgnore
+    // private List<Job> jobs;
 
     // @PrePersist
     // public void handleBeforeCreate() {
@@ -73,5 +72,4 @@ public class User {
     // ? SecurityUtil.getCurrentUserLogin().get()
     // : "";
     // }
-
 }
