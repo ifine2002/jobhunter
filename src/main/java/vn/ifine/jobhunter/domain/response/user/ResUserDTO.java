@@ -21,25 +21,26 @@ public class ResUserDTO {
     private int age;
     private Instant updatedAt;
     private Instant createdAt;
-    private CompanyUser company;
-    private RoleUser role;
 
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class CompanyUser {
-        private long id;
-        private String name;
+    // private CompanyUser company;
+    // private RoleUser role;
 
-    }
+    // @Setter
+    // @Getter
+    // @AllArgsConstructor
+    // @NoArgsConstructor
+    // public static class CompanyUser {
+    // private long id;
+    // private String name;
 
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RoleUser {
-        private long id;
-        private String name;
-    }
+    // }
+
+    // @Setter
+    // @Getter
+    // @AllArgsConstructor
+    // @NoArgsConstructor
+    // public static class RoleUser {
+    // private long id;
+    // private String name;
+    // }
 }

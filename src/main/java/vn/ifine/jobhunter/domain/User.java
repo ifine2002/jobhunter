@@ -2,8 +2,6 @@ package vn.ifine.jobhunter.domain;
 
 import java.time.Instant;
 
-import org.apache.catalina.security.SecurityUtil;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.ifine.jobhunter.util.SecurityUtil;
 import vn.ifine.jobhunter.util.constant.GenderEnum;
 
 @Entity
@@ -57,21 +56,21 @@ public class User {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    // @PrePersist
-    // public void handleBeforeCreate() {
-    // this.createdAt = Instant.now();
-    // this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-    // ? SecurityUtil.getCurrentUserLogin().get()
-    // : "";
-    // }
+    @PrePersist
+    public void handleBeforeCreate() {
+        this.createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+    }
 
-    // @PreUpdate
-    // public void handleBeforeUpdate() {
-    // this.updatedAt = Instant.now();
-    // ;
-    // this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-    // ? SecurityUtil.getCurrentUserLogin().get()
-    // : "";
-    // }
+    @PreUpdate
+    public void handleBeforeUpdate() {
+        this.updatedAt = Instant.now();
+        ;
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+    }
 
 }

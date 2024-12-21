@@ -56,20 +56,20 @@ public class Company {
     // @JsonIgnore
     // private List<Job> jobs;
 
-    // @PrePersist
-    // public void handleBeforeCreate() {
-    // this.createdAt = Instant.now();
-    // this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-    // ? SecurityUtil.getCurrentUserLogin().get()
-    // : "";
-    // }
+    @PrePersist
+    public void handleBeforeCreate() {
+        this.createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+    }
 
-    // @PreUpdate
-    // public void handleBeforeUpdate() {
-    // this.updatedAt = Instant.now();
-    // ;
-    // this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-    // ? SecurityUtil.getCurrentUserLogin().get()
-    // : "";
-    // }
+    @PreUpdate
+    public void handleBeforeUpdate() {
+        this.updatedAt = Instant.now();
+        ;
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+    }
 }

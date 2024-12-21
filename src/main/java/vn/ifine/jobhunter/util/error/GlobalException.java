@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.ifine.jobhunter.domain.response.ApiResponse;
 
@@ -60,5 +61,21 @@ public class GlobalException {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    // xử lý 404 not found
+    @ExceptionHandler(value = {
+            NoResourceFoundException.class,
+    })
+    public ResponseEntity<ApiResponse<Object>> handleNotFoundException(Exception ex) {
+        // Sử dụng Builder Pattern của Lombok
+        ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("404 Not Found. URL may not exist...")
+                .message(ex.getMessage())
+                .data(null) // Trong trường hợp không có dữ liệu trả về
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
     }
 }
