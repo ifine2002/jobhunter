@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,7 +18,8 @@ import vn.ifine.jobhunter.domain.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(value = { UsernameNotFoundException.class, IdInvalidException.class })
+    @ExceptionHandler(value = { UsernameNotFoundException.class, IdInvalidException.class,
+            BadCredentialsException.class })
     public ResponseEntity<ApiResponse<Object>> handleIdException(Exception ex) {
         // Sử dụng Builder Pattern của Lombok
         ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
