@@ -24,4 +24,23 @@ public class ResLoginDTO {
         private String name;
         // private Role role;
     }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserGetAccount {
+        private UserLogin user;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInsideToken {
+        private long id;
+        private String email;
+        private String name;
+
+    }
 }
