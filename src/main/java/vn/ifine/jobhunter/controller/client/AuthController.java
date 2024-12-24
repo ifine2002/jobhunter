@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.ifine.jobhunter.domain.User;
 import vn.ifine.jobhunter.domain.request.ReqLoginDTO;
 import vn.ifine.jobhunter.domain.response.ApiResponse;
 import vn.ifine.jobhunter.domain.response.user.ResLoginDTO;
+import vn.ifine.jobhunter.service.UserService;
 import vn.ifine.jobhunter.util.SecurityUtil;
 
 @RestController
@@ -23,10 +25,13 @@ public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/auth/login")
@@ -40,8 +45,18 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // create access_token
         ResLoginDTO res = new ResLoginDTO();
+        User currentUserDB = this.userService.handleUserByUsername(loginDTO.getUsername());
+        if (currentUserDB != null) {
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    currentUserDB.getId(),
+                    currentUserDB.getEmail(),
+                    currentUserDB.getName());
+            // currentUserDB.getRole());
+            res.setUser(userLogin);
+        }
         String access_token = this.securityUtil.createAccessToken(authentication);
         res.setAccessToken(access_token);
+
         return ResponseEntity.ok()
                 .body(ApiResponse.success("Login successfully", res));
     }
