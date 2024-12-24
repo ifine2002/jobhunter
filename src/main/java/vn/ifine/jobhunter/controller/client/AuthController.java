@@ -1,5 +1,7 @@
 package vn.ifine.jobhunter.controller.client;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +28,9 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+
+    @Value("${ifine.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
             UserService userService) {
@@ -57,7 +62,23 @@ public class AuthController {
         String access_token = this.securityUtil.createAccessToken(authentication);
         res.setAccessToken(access_token);
 
+        // create refresh token
+        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getUsername(), res);
+
+        // update user
+        this.userService.updateUserToken(refresh_token, loginDTO.getUsername());
+
+        // set refresh token vào cookie
+        ResponseCookie resCookies = ResponseCookie
+                .from("refresh_token", refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+
         return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
                 .body(ApiResponse.success("Login successfully", res));
     }
 }
