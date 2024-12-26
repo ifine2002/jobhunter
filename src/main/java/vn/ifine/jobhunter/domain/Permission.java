@@ -5,69 +5,60 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.ifine.jobhunter.util.SecurityUtil;
-import vn.ifine.jobhunter.util.constant.GenderEnum;
 
 @Entity
-@Table(name = "users")
-@Getter
+@Table(name = "permissions")
 @Setter
-public class User {
+@Getter
+@NoArgsConstructor
+public class Permission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "name không được để trống")
     private String name;
 
-    @NotBlank(message = "email không được để trống")
-    private String email;
+    @NotBlank(message = "apiPath không được để trống")
+    private String apiPath;
 
-    @NotBlank(message = "password không được để trống")
-    private String password;
+    @NotBlank(message = "method không được để trống")
+    private String method;
 
-    private int age;
+    @NotBlank(message = "module không được để trống")
+    private String module;
 
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-
-    private String address;
-
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
     private Instant createdAt;
     private Instant updatedAt;
+
     private String createdBy;
     private String updatedBy;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    public Permission(String name, String apiPath, String method, String module) {
+        this.name = name;
+        this.apiPath = apiPath;
+        this.module = module;
+        this.method = method;
+    }
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Resume> resumes;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    private List<Role> roles;
 
     @PrePersist
     public void handleBeforeCreate() {
@@ -85,5 +76,4 @@ public class User {
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
     }
-
 }

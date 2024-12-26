@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.ifine.jobhunter.domain.Company;
+import vn.ifine.jobhunter.domain.Role;
 import vn.ifine.jobhunter.domain.User;
 import vn.ifine.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ifine.jobhunter.domain.response.user.ResCreateUserDTO;
@@ -17,6 +18,7 @@ import vn.ifine.jobhunter.domain.response.user.ResUpdateUserDTO;
 import vn.ifine.jobhunter.domain.response.user.ResUserDTO;
 import vn.ifine.jobhunter.repository.UserRepository;
 import vn.ifine.jobhunter.service.CompanyService;
+import vn.ifine.jobhunter.service.RoleService;
 import vn.ifine.jobhunter.service.UserService;
 
 @Service
@@ -24,10 +26,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
-    public UserServiceImpl(UserRepository userRepository, CompanyService companyService) {
+    public UserServiceImpl(UserRepository userRepository, CompanyService companyService, RoleService roleService) {
         this.userRepository = userRepository;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     @Override
@@ -37,13 +41,17 @@ public class UserServiceImpl implements UserService {
             Optional<Company> companyOptional = this.companyService.findById(user.getCompany().getId());
             user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
         }
+        // check role
+        if (user.getRole() != null) {
+            Role r = this.roleService.fetchById(user.getRole().getId());
+            user.setRole(r != null ? r : null);
+        }
         return this.userRepository.save(user);
     }
 
     @Override
     public void handleDeleteUser(long id) {
         this.userRepository.deleteById(id);
-        ;
     }
 
     @Override
@@ -93,6 +101,11 @@ public class UserServiceImpl implements UserService {
                 Optional<Company> companyOptional = this.companyService.findById(reqUser.getCompany().getId());
                 currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
             }
+            // check role
+            if (reqUser.getRole() != null) {
+                Role r = this.roleService.fetchById(reqUser.getRole().getId());
+                currentUser.setRole(r != null ? r : null);
+            }
 
             // update
             currentUser = this.userRepository.save(currentUser);
@@ -136,13 +149,13 @@ public class UserServiceImpl implements UserService {
     public ResUserDTO convertToResUserDTO(User user) {
         ResUserDTO res = new ResUserDTO();
         ResUserDTO.CompanyUser com = new ResUserDTO.CompanyUser();
-        // ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
+        ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
 
-        // if (user.getRole() != null) {
-        // roleUser.setId(user.getRole().getId());
-        // roleUser.setName(user.getRole().getName());
-        // res.setRole(roleUser);
-        // }
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            res.setRole(roleUser);
+        }
 
         if (user.getCompany() != null) {
             com.setId(user.getCompany().getId());

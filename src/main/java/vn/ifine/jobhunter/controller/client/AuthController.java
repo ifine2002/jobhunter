@@ -57,17 +57,18 @@ public class AuthController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         // Set thông tin người dùng đăng nhập vào context (có thể sử dụng sau này)
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // create access_token
+
         ResLoginDTO res = new ResLoginDTO();
         User currentUserDB = this.userService.handleUserByUsername(loginDTO.getUsername());
         if (currentUserDB != null) {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName());
-            // currentUserDB.getRole());
+                    currentUserDB.getName(),
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
+        // create a token
         String access_token = this.securityUtil.createAccessToken(authentication.getName(), res);
         res.setAccessToken(access_token);
 
@@ -103,7 +104,7 @@ public class AuthController {
             userLogin.setId(currentUser.getId());
             userLogin.setEmail(currentUser.getEmail());
             userLogin.setName(currentUser.getName());
-            // userLogin.setRole(currentUser.getRole());
+            userLogin.setRole(currentUser.getRole());
 
             userGetAccount.setUser(userLogin);
         }
@@ -134,8 +135,8 @@ public class AuthController {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName());
-            // currentUserDB.getRole());
+                    currentUserDB.getName(),
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
         // create a new access token

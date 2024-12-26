@@ -19,6 +19,20 @@ import vn.ifine.jobhunter.domain.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalException {
+
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ApiResponse<Object>> handleAllException(Exception ex) {
+                // Sử dụng Builder Pattern của Lombok
+                ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                .error("Internal Server Error")
+                                .message(ex.getMessage())
+                                .data(null) // Trong trường hợp không có dữ liệu trả về
+                                .build();
+
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+        }
+
         @ExceptionHandler(value = { UsernameNotFoundException.class, IdInvalidException.class,
                         BadCredentialsException.class })
         public ResponseEntity<ApiResponse<Object>> handleIdException(Exception ex) {
