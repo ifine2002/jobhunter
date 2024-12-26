@@ -22,18 +22,17 @@ public class ResUserDTO {
     private Instant updatedAt;
     private Instant createdAt;
 
-    // private CompanyUser company;
+    private CompanyUser company;
     // private RoleUser role;
 
-    // @Setter
-    // @Getter
-    // @AllArgsConstructor
-    // @NoArgsConstructor
-    // public static class CompanyUser {
-    // private long id;
-    // private String name;
-
-    // }
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CompanyUser {
+        private long id;
+        private String name;
+    }
 
     // @Setter
     // @Getter

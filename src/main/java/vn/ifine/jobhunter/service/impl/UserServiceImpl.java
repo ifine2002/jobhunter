@@ -9,25 +9,34 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.ifine.jobhunter.domain.Company;
 import vn.ifine.jobhunter.domain.User;
 import vn.ifine.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ifine.jobhunter.domain.response.user.ResCreateUserDTO;
 import vn.ifine.jobhunter.domain.response.user.ResUpdateUserDTO;
 import vn.ifine.jobhunter.domain.response.user.ResUserDTO;
 import vn.ifine.jobhunter.repository.UserRepository;
+import vn.ifine.jobhunter.service.CompanyService;
 import vn.ifine.jobhunter.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
     @Override
     public User handleCreateUser(User user) {
+        // check company
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyService.findById(user.getCompany().getId());
+            user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+        }
         return this.userRepository.save(user);
     }
 
@@ -79,6 +88,12 @@ public class UserServiceImpl implements UserService {
             currentUser.setAge(reqUser.getAge());
             currentUser.setGender(reqUser.getGender());
 
+            // check company
+            if (reqUser.getCompany() != null) {
+                Optional<Company> companyOptional = this.companyService.findById(reqUser.getCompany().getId());
+                currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+            }
+
             // update
             currentUser = this.userRepository.save(currentUser);
         }
@@ -98,7 +113,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO res = new ResCreateUserDTO();
-        // ResCreateUserDTO.CompanyUser com = new ResCreateUserDTO.CompanyUser();
+        ResCreateUserDTO.CompanyUser com = new ResCreateUserDTO.CompanyUser();
 
         res.setId(user.getId());
         res.setEmail(user.getEmail());
@@ -108,11 +123,11 @@ public class UserServiceImpl implements UserService {
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
 
-        // if (user.getCompany() != null) {
-        // com.setId(user.getCompany().getId());
-        // com.setName(user.getCompany().getName());
-        // res.setCompany(com);
-        // }
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            com.setName(user.getCompany().getName());
+            res.setCompany(com);
+        }
 
         return res;
     }
@@ -120,6 +135,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResUserDTO convertToResUserDTO(User user) {
         ResUserDTO res = new ResUserDTO();
+        ResUserDTO.CompanyUser com = new ResUserDTO.CompanyUser();
         // ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
 
         // if (user.getRole() != null) {
@@ -128,11 +144,11 @@ public class UserServiceImpl implements UserService {
         // res.setRole(roleUser);
         // }
 
-        // if (user.getCompany() != null) {
-        // com.setId(user.getCompany().getId());
-        // com.setName(user.getCompany().getName());
-        // res.setCompany(com);
-        // }
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            com.setName(user.getCompany().getName());
+            res.setCompany(com);
+        }
 
         res.setId(user.getId());
         res.setEmail(user.getEmail());
@@ -149,12 +165,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO res = new ResUpdateUserDTO();
-        // ResUpdateUserDTO.CompanyUser com = new ResUpdateUserDTO.CompanyUser();
-        // if (user.getCompany() != null) {
-        // com.setId(user.getCompany().getId());
-        // com.setName(user.getCompany().getName());
-        // res.setCompany(com);
-        // }
+        ResUpdateUserDTO.CompanyUser com = new ResUpdateUserDTO.CompanyUser();
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            com.setName(user.getCompany().getName());
+            res.setCompany(com);
+        }
         res.setId(user.getId());
         res.setName(user.getName());
         res.setAge(user.getAge());

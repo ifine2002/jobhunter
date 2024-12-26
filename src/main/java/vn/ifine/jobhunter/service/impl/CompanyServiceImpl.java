@@ -9,9 +9,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.ifine.jobhunter.domain.Company;
+import vn.ifine.jobhunter.domain.Job;
 import vn.ifine.jobhunter.domain.User;
 import vn.ifine.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ifine.jobhunter.repository.CompanyRepository;
+import vn.ifine.jobhunter.repository.JobRepository;
 import vn.ifine.jobhunter.repository.UserRepository;
 import vn.ifine.jobhunter.service.CompanyService;
 
@@ -19,10 +21,13 @@ import vn.ifine.jobhunter.service.CompanyService;
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
+    private final JobRepository jobRepository;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, UserRepository userRepository) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, UserRepository userRepository,
+            JobRepository jobRepository) {
         this.companyRepository = companyRepository;
         this.userRepository = userRepository;
+        this.jobRepository = jobRepository;
     }
 
     @Override
@@ -69,6 +74,9 @@ public class CompanyServiceImpl implements CompanyService {
             // fetch all user belong to this company
             List<User> users = this.userRepository.findByCompany(com);
             this.userRepository.deleteAll(users);
+            // fetch all job belong to this company
+            List<Job> jobs = this.jobRepository.findByCompany(com);
+            this.jobRepository.deleteAll(jobs);
 
         }
         this.companyRepository.deleteById(id);
