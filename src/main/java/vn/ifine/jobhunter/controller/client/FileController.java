@@ -26,7 +26,7 @@ import vn.ifine.jobhunter.service.FileService;
 import vn.ifine.jobhunter.util.error.StorageException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/auth")
 public class FileController {
     @Value("${ifine.upload-file.base-uri}")
     private String baseURI;

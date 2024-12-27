@@ -106,4 +106,18 @@ public class GlobalException {
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
         }
+
+        @ExceptionHandler(value = {
+                        PermissionException.class })
+        public ResponseEntity<ApiResponse<Object>> handlePermissionException(Exception ex) {
+                // Sử dụng Builder Pattern của Lombok
+                ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
+                                .status(HttpStatus.FORBIDDEN.value())
+                                .error("Forbidden")
+                                .message(ex.getMessage())
+                                .data(null) // Trong trường hợp không có dữ liệu trả về
+                                .build();
+
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
+        }
 }

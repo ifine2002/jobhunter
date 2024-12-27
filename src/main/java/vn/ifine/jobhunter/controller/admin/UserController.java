@@ -1,7 +1,5 @@
 package vn.ifine.jobhunter.controller.admin;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;

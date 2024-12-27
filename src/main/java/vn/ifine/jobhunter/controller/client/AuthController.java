@@ -29,7 +29,7 @@ import vn.ifine.jobhunter.util.SecurityUtil;
 import vn.ifine.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/public")
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;

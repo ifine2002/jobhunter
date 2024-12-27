@@ -20,7 +20,7 @@ import vn.ifine.jobhunter.service.CompanyService;
 import vn.ifine.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/public")
 public class CompanyController {
 
     private final CompanyService companyService;
