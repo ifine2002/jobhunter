@@ -80,11 +80,16 @@ public class DatabaseInitializer implements CommandLineRunner {
             arr.add(new Permission("Get a user by id", "/api/admin/users/{id}", "GET", "USERS"));
             arr.add(new Permission("Get users with pagination", "/api/admin/users", "GET", "USERS"));
 
-            arr.add(new Permission("Create a subscriber", "/api/admin/subscribers", "POST", "SUBSCRIBERS"));
-            arr.add(new Permission("Update a subscriber", "/api/admin/subscribers", "PUT", "SUBSCRIBERS"));
-            arr.add(new Permission("Delete a subscriber", "/api/admin/subscribers/{id}", "DELETE", "SUBSCRIBERS"));
-            arr.add(new Permission("Get a subscriber by id", "/api/admin/subscribers/{id}", "GET", "SUBSCRIBERS"));
-            arr.add(new Permission("Get subscribers with pagination", "/api/admin/subscribers", "GET", "SUBSCRIBERS"));
+            // arr.add(new Permission("Create a subscriber", "/api/admin/subscribers",
+            // "POST", "SUBSCRIBERS"));
+            // arr.add(new Permission("Update a subscriber", "/api/admin/subscribers",
+            // "PUT", "SUBSCRIBERS"));
+            // arr.add(new Permission("Delete a subscriber", "/api/admin/subscribers/{id}",
+            // "DELETE", "SUBSCRIBERS"));
+            // arr.add(new Permission("Get a subscriber by id",
+            // "/api/admin/subscribers/{id}", "GET", "SUBSCRIBERS"));
+            // arr.add(new Permission("Get subscribers with pagination",
+            // "/api/admin/subscribers", "GET", "SUBSCRIBERS"));
 
             arr.add(new Permission("Create a skill", "/api/admin/skills", "POST", "SKILLS"));
             arr.add(new Permission("Update a skill", "/api/admin/skills", "PUT", "SKILLS"));

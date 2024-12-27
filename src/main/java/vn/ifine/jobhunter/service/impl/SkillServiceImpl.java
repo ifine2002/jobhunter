@@ -71,8 +71,7 @@ public class SkillServiceImpl implements SkillService {
         currentSkill.getJobs().forEach(job -> job.getSkills().remove(currentSkill));
 
         // delete subscriber (inside subscriber_skill table)
-        // currentSkill.getSubscribers().forEach(subs ->
-        // subs.getSkills().remove(currentSkill));
+        currentSkill.getSubscribers().forEach(subs -> subs.getSkills().remove(currentSkill));
 
         // delete skill
         this.skillRepository.delete(currentSkill);
