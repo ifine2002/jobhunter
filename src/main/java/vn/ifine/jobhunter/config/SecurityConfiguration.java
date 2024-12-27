@@ -39,7 +39,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
-        String[] whiteList = { "/", "/api/public/**", "/storage/**" };
+        String[] whiteList = { "/", "/api/public/**", "/storage/**", "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html" };
         http
                 .csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
