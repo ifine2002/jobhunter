@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import vn.ifine.jobhunter.domain.Permission;
 import vn.ifine.jobhunter.domain.Role;
-import vn.ifine.jobhunter.domain.Skill;
 import vn.ifine.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ifine.jobhunter.repository.PermissionRepository;
 import vn.ifine.jobhunter.repository.RoleRepository;
