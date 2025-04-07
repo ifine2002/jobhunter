@@ -24,12 +24,18 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 
 import vn.ifine.jobhunter.util.SecurityUtil;
+import vn.ifine.jobhunter.util.constant.TokenType;
+import vn.ifine.jobhunter.util.error.IdInvalidException;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
-    @Value("${ifine.jwt.base64-secret}")
-    private String jwtKey;
+
+    @Value("${ifine.jwt.access-token}")
+    private String jwtKeyAccess;
+
+    @Value("${ifine.jwt.refresh-token}")
+    private String jwtKeyRefresh;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,11 +75,11 @@ public class SecurityConfiguration {
         return jwtAuthenticationConverter;
     }
 
-    // cấu hình decoder giải mã token
+    // cấu hình decoder giải mã access_token
     @Bean
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
-                getSecretKey()) // Lấy SecretKey để giải mã
+                geKey(TokenType.ACCESS)) // Lấy SecretKey để giải mã
                 .macAlgorithm(SecurityUtil.JWT_ALGORITHM).build(); // Thuật toán mã hóa (HS512)
         return token -> {
             try {
@@ -85,15 +91,27 @@ public class SecurityConfiguration {
         };
     }
 
-    // khai báo cách mã hóa jwt
-    @Bean
-    public JwtEncoder jwtEncoder() {
-        return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
+    @Bean("accessTokenEncoder")
+    public JwtEncoder accessTokenEncoder() {
+        return new NimbusJwtEncoder(new ImmutableSecret<>(geKey(TokenType.ACCESS)));
     }
 
-    private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.from(jwtKey).decode();
-        return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
+    @Bean("refreshTokenEncoder")
+    public JwtEncoder refreshTokenEncoder() {
+        return new NimbusJwtEncoder(new ImmutableSecret<>(geKey(TokenType.REFRESH)));
+    }
 
+    private SecretKey geKey(TokenType type) {
+        switch (type){
+            case ACCESS -> {
+                byte[] keyBytes = Base64.from(jwtKeyAccess).decode();
+                return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
+            }
+            case REFRESH -> {
+                byte[] keyBytes = Base64.from(jwtKeyRefresh).decode();
+                return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
+            }
+            default -> throw new IdInvalidException("Invalid token type");
+        }
     }
 }

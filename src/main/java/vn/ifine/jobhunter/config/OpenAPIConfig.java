@@ -29,12 +29,12 @@ public class OpenAPIConfig {
         return server;
     }
 
-    // private Contact createContact() {
-    // return new Contact()
-    // .email("ads.hoidanit@gmail.com")
-    // .name("Hỏi Dân IT")
-    // .url("https://hoidanit.vn");
-    // }
+     private Contact createContact() {
+     return new Contact()
+     .email("boyyhp1@gmail.com")
+     .name("Ifine")
+     .url("https://ifine2002.vn");
+     }
 
     private License createLicense() {
         return new License()
@@ -46,9 +46,9 @@ public class OpenAPIConfig {
         return new Info()
                 .title("Job Hunter API")
                 .version("1.0")
-                // .contact(createContact())
+                 .contact(createContact())
                 .description("This API exposes all endpoints (job hunter)")
-                // .termsOfService("https://hoidanit.vn/donate")
+                 .termsOfService("https://ifine2002.vn/donate")
                 .license(createLicense());
     }
 

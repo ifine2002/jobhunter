@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -63,10 +64,11 @@ public class GlobalException {
 
         // xử lý lỗi khi valid dữ liệu (@Valid)
         @ExceptionHandler(MethodArgumentNotValidException.class)
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
         public ResponseEntity<ApiResponse<Object>> validationError(MethodArgumentNotValidException ex) {
                 BindingResult result = ex.getBindingResult();
                 final List<FieldError> fieldErrors = result.getFieldErrors();
-                List<String> errors = fieldErrors.stream().map(f -> f.getDefaultMessage()).collect(Collectors.toList());
+                List<String> errors = fieldErrors.stream().map(f -> f.getDefaultMessage()).toList();
                 ApiResponse<Object> apiResponse = ApiResponse.<Object>builder()
                                 .status(HttpStatus.BAD_REQUEST.value())
                                 .error(ex.getBody().getDetail())

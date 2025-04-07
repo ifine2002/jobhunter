@@ -80,7 +80,6 @@ public class User {
     @PreUpdate
     public void handleBeforeUpdate() {
         this.updatedAt = Instant.now();
-        ;
         this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";

@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,14 +32,17 @@ import vn.ifine.jobhunter.domain.response.user.ResLoginDTO;
 public class SecurityUtil {
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
-    private final JwtEncoder jwtEncoder;
+    private final JwtEncoder accessTokenEncoder;
+    private final JwtEncoder refreshTokenEncoder;
 
-    public SecurityUtil(JwtEncoder jwtEncoder) {
-        this.jwtEncoder = jwtEncoder;
+    public SecurityUtil(@Qualifier("accessTokenEncoder") JwtEncoder accessTokenEncoder,
+        @Qualifier("refreshTokenEncoder") JwtEncoder refreshTokenEncoder) {
+        this.accessTokenEncoder = accessTokenEncoder;
+        this.refreshTokenEncoder = refreshTokenEncoder;
     }
 
-    @Value("${ifine.jwt.base64-secret}")
-    private String jwtKey;
+    @Value("${ifine.jwt.refresh-token}")
+    private String jwtKeyRefresh;
 
     @Value("${ifine.jwt.access-token-validity-in-seconds}")
     private long accessTokenExpiration;
@@ -71,7 +75,7 @@ public class SecurityUtil {
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
+        return this.accessTokenEncoder.encode(JwtEncoderParameters.from(jwsHeader,
         claims)).getTokenValue();
     }
 
@@ -93,18 +97,18 @@ public class SecurityUtil {
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
+        return this.refreshTokenEncoder.encode(JwtEncoderParameters.from(jwsHeader,
         claims)).getTokenValue();
     }
 
-     private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.from(jwtKey).decode();
+     private SecretKey getSecretKeyRefresh() {
+        byte[] keyBytes = Base64.from(jwtKeyRefresh).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
     }
 
     public Jwt checkValidRefreshToken(String token){
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
-            getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build(); // Lấy SecretKey để giải mã
+            getSecretKeyRefresh()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build(); // Lấy SecretKey để giải mã
             try {
                 return jwtDecoder.decode(token);
             } catch (Exception e) {
@@ -112,7 +116,6 @@ public class SecurityUtil {
                 throw e;
             }
     }
-
 
     /**
      * Get the login of the current user.
@@ -136,16 +139,4 @@ public class SecurityUtil {
         }
         return null;
     }
-
-    /**
-     * Get the JWT of the current user.
-     *
-     * @return the JWT of the current user.
-     */
-    // public static Optional<String> getCurrentUserJWT() {
-    //     SecurityContext securityContext = SecurityContextHolder.getContext();
-    //     return Optional.ofNullable(securityContext.getAuthentication())
-    //         .filter(authentication -> authentication.getCredentials() instanceof String)
-    //         .map(authentication -> (String) authentication.getCredentials());
-    // }
 }
